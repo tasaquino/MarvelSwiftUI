@@ -7,11 +7,11 @@
 
 import Foundation
 
-protocol HomeUseCaseProtocol {
+protocol ComicsUseCaseProtocol {
     func fetchComics() async throws -> [Comic]?
 }
 
-class ComicsUseCase: HomeUseCaseProtocol {
+class ComicsUseCase: ComicsUseCaseProtocol {
     let repository: MarvelRepositoryProtocol
     
     init(repository: MarvelRepositoryProtocol) {

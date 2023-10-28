@@ -7,12 +7,12 @@
 
 import Foundation
 
-struct MarvelHomeResponse: Decodable {
+struct MarvelHomeResponse: Codable {
     let code: Int
     let data: Data?
 }
 
-struct Data: Decodable {
+struct Data: Codable {
     let count: Int
     let offset: Int
     let limit: Int
@@ -20,7 +20,7 @@ struct Data: Decodable {
     let results: [Result]?
 }
 
-struct Result: Decodable {
+struct Result: Codable {
     let id: Int
     let title: String?
     let description: String?
@@ -28,7 +28,7 @@ struct Result: Decodable {
     let images: [ComicImageData]?
 }
 
-struct ComicImageData: Decodable {
+struct ComicImageData: Codable {
     let path: String?
     let fileExtension: String?
     
@@ -38,5 +38,16 @@ struct ComicImageData: Decodable {
             return nil
         }
         return "\(path).\(fileExtension)"
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.path = try container.decodeIfPresent(String.self, forKey: .path)
+        self.fileExtension = try container.decodeIfPresent(String.self, forKey: .fileExtension)
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case path = "path"
+        case fileExtension = "extension"
     }
 }

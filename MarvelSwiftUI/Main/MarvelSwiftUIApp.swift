@@ -11,7 +11,12 @@ import SwiftUI
 struct MarvelSwiftUIApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            TabView {
+                HomeScreen()
+                    .tabItem { Label("Comics", systemImage: "book.circle") }
+                HomeScreen().tabItem { Label("Favorites", systemImage: "star.circle") }
+            }
+            
         }
     }
 }

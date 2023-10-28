@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Comic: Decodable {
+struct Comic: Decodable, Identifiable {
     let id: Int
     let title: String?
     let description: String?
@@ -15,7 +15,7 @@ struct Comic: Decodable {
     let images: [ComicImage?]?
 }
 
-struct ComicImage: Decodable {
+struct ComicImage: Codable {
     let path: String?
     let fileExtension: String?
     
