@@ -13,7 +13,7 @@ final class MarvelRepositoryTest: XCTestCase {
 
     func test_fetchComics_success() async throws {
         let appConfig = AppConfig()
-        let sut = MarvelRepository(appConfig: appConfig)
+        let sut = ComicsRepository(appConfig: appConfig)
         let response = try await sut.fetchComics()
         
         XCTAssert(response?.code == 200)
@@ -25,7 +25,7 @@ final class MarvelRepositoryTest: XCTestCase {
     
     func test_fetchComics_invalidUrl_fail() async throws {
         let appConfig = MockAppConfig(url: "msmarvel", apiKey: "boom", hash: "boom")
-        let sut = MarvelRepository(appConfig: appConfig)
+        let sut = ComicsRepository(appConfig: appConfig)
         do {
             try await sut.fetchComics()
         } catch {
@@ -35,7 +35,7 @@ final class MarvelRepositoryTest: XCTestCase {
     
     func test_fetchComics_wrongApiKey_fail() async throws {
         let appConfig = MockAppConfig(url: "https://gateway.marvel.com", apiKey: "boom", hash: "boom")
-        let sut = MarvelRepository(appConfig: appConfig)
+        let sut = ComicsRepository(appConfig: appConfig)
         do {
             try await sut.fetchComics()
         } catch {

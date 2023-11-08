@@ -13,10 +13,11 @@ struct MarvelSwiftUIApp: App {
         WindowGroup {
             TabView {
                 HomeScreen()
+                    .environmentObject(ComicsFactory.makeComicsViewModel())
+                    .environmentObject(ComicsFactory.makeCharactersViewModel())
                     .tabItem { Label("Comics", systemImage: "book.circle") }
-                HomeScreen().tabItem { Label("Favorites", systemImage: "star.circle") }
+                FavoritesListView().tabItem { Label("Favorites", systemImage: "star.circle") }
             }
-            
         }
     }
 }

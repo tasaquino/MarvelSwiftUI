@@ -13,5 +13,6 @@ protocol AppConfigProtocol {
     var baseUrl: String { get }
     
     func getComicsUrl() -> String
+    func getCharacters() -> String
     func getCharacterUrlBy(characterId: String) -> String
 }

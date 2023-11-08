@@ -12,8 +12,8 @@ struct HomeScreen: View {
         VStack {
             NavigationStack {
                 ScrollView {
-                    FavoritesCarouselView()
-                    ComicsView(viewModel: ComicsViewModel(initialComics: [], useCase: ComicsUseCase(repository: MarvelRepository(appConfig: AppConfig())), gridMode: false))
+                    CharactersCarouselView()
+                    ComicsView()
                 }
             }
         }
