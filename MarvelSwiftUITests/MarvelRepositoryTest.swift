@@ -7,13 +7,24 @@
 
 import XCTest
 import Alamofire
+import Mocker
 @testable import MarvelSwiftUI
 
 final class MarvelRepositoryTest: XCTestCase {
 
     func test_fetchComics_success() async throws {
         let appConfig = AppConfig()
-        let sut = ComicsRepository(appConfig: appConfig)
+        let networking = MockNetworkingManager()
+        
+        let originalUrl = appConfig.getComicsUrl()
+        
+        // setup Mocker
+        let mock = Mock(url: URL(string: originalUrl)!, dataType: .json, statusCode: 200, data: [
+            .get: try! Data(contentsOf: MockedData.comicsData)])
+        mock.register()
+        
+        // setup SUT
+        let sut = ComicsRepository( networking: networking, appConfig: appConfig)
         let response = try await sut.fetchComics()
         
         XCTAssert(response?.code == 200)
@@ -25,7 +36,8 @@ final class MarvelRepositoryTest: XCTestCase {
     
     func test_fetchComics_invalidUrl_fail() async throws {
         let appConfig = MockAppConfig(url: "msmarvel", apiKey: "boom", hash: "boom")
-        let sut = ComicsRepository(appConfig: appConfig)
+        let networking = MockNetworkingManager()
+        let sut = ComicsRepository(networking: networking, appConfig: appConfig)
         do {
             try await sut.fetchComics()
         } catch {
@@ -35,31 +47,12 @@ final class MarvelRepositoryTest: XCTestCase {
     
     func test_fetchComics_wrongApiKey_fail() async throws {
         let appConfig = MockAppConfig(url: "https://gateway.marvel.com", apiKey: "boom", hash: "boom")
-        let sut = ComicsRepository(appConfig: appConfig)
+        let networking = MockNetworkingManager()
+        let sut = ComicsRepository(networking: networking, appConfig: appConfig)
         do {
             try await sut.fetchComics()
         } catch {
             XCTAssert(error.asAFError?.responseCode == 401)
         }
-    }
-}
-
-struct MockAppConfig: AppConfigProtocol {
-    var apiKey: String = "boomm"
-    var hash: String = "boomm"
-    var baseUrl: String = "boomm"
-    
-    init(url: String, apiKey: String, hash: String) {
-        self.baseUrl = url
-        self.apiKey = apiKey
-        self.hash = hash
-    }
-    
-    func getComicsUrl() -> String {
-        return "\(baseUrl)/v1/public/comics?apikey=\(apiKey)&hash=\(hash)&ts=1"
-    }
-    
-    func getCharacterUrlBy(characterId: String) -> String {
-        return ""
     }
 }

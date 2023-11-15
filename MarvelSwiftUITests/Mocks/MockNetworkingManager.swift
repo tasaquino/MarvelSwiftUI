@@ -1,20 +1,22 @@
 //
-//  NetworkingManager.swift
-//  MarvelSwiftUI
+//  MockNetworkingManager.swift
+//  MarvelSwiftUITests
 //
-//  Created by Thais Aquino on 8/11/2023.
+//  Created by Thais Aquino on 15/11/2023.
 //
 
 import Foundation
 import Alamofire
+import Mocker
+@testable import MarvelSwiftUI
 
-protocol NetworkingManagerProtocol {
-    func fetch<T:Decodable>(url: String) async throws -> T
-}
-
-struct NetworkingManager: NetworkingManagerProtocol {
+struct MockNetworkingManager: NetworkingManagerProtocol {
     func fetch<T:Decodable>(url: String) async throws -> T {
-        let response: DataResponse<T, AFError> = await AF.request(url, interceptor: .retryPolicy)
+        let configuration = URLSessionConfiguration.af.default
+        configuration.protocolClasses = [MockingURLProtocol.self] + (configuration.protocolClasses ?? [])
+        let sessionManager = Alamofire.Session(configuration: configuration)
+
+        let response: DataResponse<T, AFError> = await sessionManager.request(url, interceptor: .retryPolicy)
                                .cacheResponse(using: .cache)
                                .validate()
                                .cURLDescription { description in
@@ -25,6 +27,7 @@ struct NetworkingManager: NetworkingManagerProtocol {
         
         do {
             let response = try response.result.get()
+            debugPrint(response)
             return response
         } catch {
             throw error
